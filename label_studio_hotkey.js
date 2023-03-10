@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.tampermonkey.net/scripts.php?ext=dhdg&updated=true&version=4.18.1
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
+// @updateURL    https://full-stack-study.github.io/tampermonkey-script/label_studio_hotkey.js
 // @grant        none
 // ==/UserScript==
 
@@ -139,7 +140,7 @@ async function clear_annotation_and_prediect(task_id) {
         }
 
         if (e.key === 'c') {
-            // 清除注解和预测数据
+            // 清除注解和预测数据https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.jshttps://cdn4.shanhs.com/offline-upload/pro/20230310/8151682bf2a04aeaada0bafab35d0a1c.jpg
             clear_annotation_and_prediect(task_id)
             to_next_task()
         }

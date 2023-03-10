@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      0.4
+// @version      0.5
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -91,11 +91,15 @@ function delete_prediction_by_id(id) {
     return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
 }
 
+function clear_prediect(predictions) {
+    predictions && predictions.forEach(({id}) => delete_prediction_by_id(id))
+}
+
 async function clear_annotation_and_prediect(task_id) {
     const task_info = await get_task_info(task_id)
     const {annotations, predictions} = task_info
     annotations.forEach(({id}) => delete_annotation_by_id(id))
-    predictions.forEach(({id}) => delete_prediction_by_id(id))
+    clear_prediect(predictions)
 }
 
 (function() {
@@ -165,14 +169,19 @@ async function clear_annotation_and_prediect(task_id) {
                     const project_name = cur_project.title
                     const base_name = project_name.split("_")[0]
                     const task_info = await get_task_info(task_id)
-                    const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length
-                    const move_to_name = has_annoataion ? base_name : base_name +'_BG'
-                    const bj_project = find_project_by_name(pj_map, move_to_name)
-                    if (bj_project) {
-                        await move_task_to_project(task_id, bj_project.id)
-                        delete_task(task_id)
-                        show_message(`移动至 ${move_to_name} 成功`)                        
-                    }
+                    const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length                    
+                    if (has_annoataion) {
+                        clear_prediect(task_info.predictions)
+                        show_message(`清除预测数据成功`)                        
+                    } else {
+                        const move_to_name = base_name +'_BG'
+                        const bj_project = find_project_by_name(pj_map, move_to_name)
+                        if (bj_project) {
+                            await move_task_to_project(task_id, bj_project.id)
+                            delete_task(task_id)
+                            show_message(`移动至 ${move_to_name} 成功`)                        
+                        }
+                    }                    
                     // 将对应
                 }
             }, 0)

@@ -6,7 +6,7 @@
 // @author       You
 // @match        https://www.tampermonkey.net/scripts.php?ext=dhdg&updated=true&version=4.18.1
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://full-stack-study.github.io/tampermonkey-script/label_studio_hotkey.js
+// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js
 // @grant        none
 // ==/UserScript==
 

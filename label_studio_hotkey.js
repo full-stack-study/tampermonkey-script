@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      0.3
+// @version      0.4
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -143,6 +143,7 @@ async function clear_annotation_and_prediect(task_id) {
             // 清除注解和预测数据https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.jshttps://cdn4.shanhs.com/offline-upload/pro/20230310/8151682bf2a04aeaada0bafab35d0a1c.jpg
             clear_annotation_and_prediect(task_id)
             to_next_task()
+            show_message("清除注解和预测成功" + task_id)
         }
         if (e.key === '+' || e.key === '-') {
             const is_add = e.key === '+'

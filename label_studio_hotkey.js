@@ -15,7 +15,7 @@ function delete_task(task_id) {
     return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
 }
 
-async function init_tools() {
+async function init_tools() {    
     const response = await fetch(`/api/projects?t=${Date.now()}`)
     const data = await response.json()
     const project_list = data.results
@@ -82,6 +82,21 @@ function to_next_task() {
     }
 }
 
+function delete_annotation_by_id(id) {
+    return fetch(`/api/annotations/${id}`, {method: 'DELETE'})
+}
+
+function delete_prediction_by_id(id) {
+    return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
+}
+
+async function clear_annotation_and_prediect(task_id) {
+    const task_info = await get_task_info(task_id)
+    const {annotations, predictions} = task_info
+    annotations.forEach(({id}) => delete_annotation_by_id(id))
+    predictions.forEach(({id}) => delete_prediction_by_id(id))
+}
+
 (function() {
     'use strict';
 
@@ -120,6 +135,12 @@ function to_next_task() {
             const params = new URLSearchParams(location.search)            
             delete_task(task_id)
             show_message("删除任务成功" + task_id)
+            to_next_task()
+        }
+
+        if (e.key === 'c') {
+            // 清除注解和预测数据
+            clear_annotation_and_prediect(task_id)
             to_next_task()
         }
         if (e.key === '+' || e.key === '-') {

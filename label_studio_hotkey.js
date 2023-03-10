@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         label_studio_hotkey
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/full-stack-study/tampermonkey-script
 // @version      0.2
-// @description  try to take over the world!
-// @author       You
-// @match        https://www.tampermonkey.net/scripts.php?ext=dhdg&updated=true&version=4.18.1
+// @description  给label_studio添加一些自定义的快捷键!
+// @author       DiamondFsd
+// @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
 // @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js
 // @grant        none

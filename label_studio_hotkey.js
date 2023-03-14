@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      0.5
+// @version      0.6
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -161,6 +161,7 @@ async function clear_annotation_and_prediect(task_id) {
         }
 
         if (e.key === 'f') {
+            const force = e.ctrlKey
             setTimeout(async () => {
                 if (task_id) {
                     const pj_map = await project_promise_map
@@ -170,11 +171,12 @@ async function clear_annotation_and_prediect(task_id) {
                     const base_name = project_name.split("_")[0]
                     const task_info = await get_task_info(task_id)
                     const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length                    
-                    if (has_annoataion) {
+                    const move_to_name = has_annoataion ? base_name : base_name +'_BG'
+                    const current_is_base_project = project_name === base_name
+                    if (has_annoataion && current_is_base_project) {
                         clear_prediect(task_info.predictions)
                         show_message(`清除预测数据成功`)                        
                     } else {
-                        const move_to_name = base_name +'_BG'
                         const bj_project = find_project_by_name(pj_map, move_to_name)
                         if (bj_project) {
                             await move_task_to_project(task_id, bj_project.id)

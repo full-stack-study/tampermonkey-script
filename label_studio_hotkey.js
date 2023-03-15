@@ -92,7 +92,11 @@ function delete_prediction_by_id(id) {
 }
 
 function clear_prediect(predictions) {
-    predictions && predictions.forEach(({id}) => delete_prediction_by_id(id))
+    if (predictions) {
+        const all_delete_task = predictions.map(({id}) => delete_prediction_by_id(id))
+        return Promise.all(all_delete_task)
+    }
+    return Promise.resolve()
 }
 
 async function clear_annotation_and_prediect(task_id) {
@@ -174,8 +178,8 @@ async function clear_annotation_and_prediect(task_id) {
                     const move_to_name = has_annoataion ? base_name : base_name +'_BG'
                     const current_is_base_project = project_name === base_name
                     if (has_annoataion && current_is_base_project) {
-                        clear_prediect(task_info.predictions)
-                        show_message(`清除预测数据成功`)                        
+                        await clear_prediect(task_info.predictions)                        
+                        show_message('清除预测数据成功')
                     } else {
                         const bj_project = find_project_by_name(pj_map, move_to_name)
                         if (bj_project) {

@@ -10,107 +10,109 @@
 // @grant        none
 // ==/UserScript==
 
-const button = ``
-
-function delete_task(task_id) {
-    return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
-}
-
-async function init_tools() {    
-    const response = await fetch(`/api/projects?t=${Date.now()}`)
-    const data = await response.json()
-    const project_list = data.results
-    const project_map = {}
-    project_list.forEach(item => {
-        project_map[item.id] = item
-    })
-    return project_map
-}
-
-
-function find_project_by_name(pj_map, name) {
-    return Object.values(pj_map).filter(a => a.title === name)[0]
-
-}
-
-
-function get_task_id() {
-    const params = new URLSearchParams(location.search)
-    const task_id = params.get("task")
-    return task_id
-}
-
-function get_current_project_id(){
-    const cur_path = location.pathname
-    const path_split = cur_path.split('/')
-    return path_split[path_split.indexOf('projects') + 1]
-}
-async function get_task_info(task_id) {
-    const response = await fetch(`/api/tasks/${task_id}?t=${Date.now()}`)
-    const data = await response.json()
-    return data
-}
-async function move_task_to_project(task_id, project_id) {
-    console.log('begin move project', task_id, project_id)
-    const {data, annotations} = await get_task_info(task_id)
-    const task_data = [{
-        data,
-        annotations: annotations.filter(r => r.result.length > 0).map(a => {
-           a.result.forEach(item => {
-              delete item.id
-           })
-           return {result: a.result}
-        })
-    }]
-    const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(task_data) })
-    console.log('move_task_success', await import_res.json())
-}
-
-function show_message(message) {
-    Toastify({
-        text: message,
-        duration: Math.min(message/4 * 1000, 3000)
-    }).showToast();
-}
-
-function to_next_task() {
-    const selectedDom = document.querySelector('.dm-table__row-wrapper_selected')
-    if (selectedDom.nextSibling) {
-        selectedDom.nextSibling.click()
-        document.querySelector('.dm-table__row-wrapper_selected').previousSibling.scrollIntoView()
-    } else {
-        show_message('已经是最后一个了')
-    }
-}
-
-function delete_annotation_by_id(id) {
-    return fetch(`/api/annotations/${id}`, {method: 'DELETE'})
-}
-
-function delete_prediction_by_id(id) {
-    return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
-}
-
-function clear_prediect(predictions) {
-    if (predictions) {
-        const all_delete_task = predictions.map(({id}) => delete_prediction_by_id(id))
-        return Promise.all(all_delete_task)
-    }
-    return Promise.resolve()
-}
-
-async function clear_annotation_and_prediect(task_id) {
-    const task_info = await get_task_info(task_id)
-    const {annotations, predictions} = task_info
-    annotations.forEach(({id}) => delete_annotation_by_id(id))
-    clear_prediect(predictions)
-}
 
 (function() {
     'use strict';
 
+    
+    function delete_task(task_id) {
+        return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
+    }
+
+    async function init_tools() {    
+        const response = await fetch(`/api/projects?t=${Date.now()}`)
+        const data = await response.json()
+        const project_list = data.results
+        const project_map = {}
+        project_list.forEach(item => {
+            project_map[item.id] = item
+        })
+        return project_map
+    }
+
+
+    function find_project_by_name(pj_map, name) {
+        return Object.values(pj_map).filter(a => a.title === name)[0]
+
+    }
+
+
+    function get_task_id() {
+        const params = new URLSearchParams(location.search)
+        const task_id = params.get("task")
+        return task_id
+    }
+
+    function get_current_project_id(){
+        const cur_path = location.pathname
+        const path_split = cur_path.split('/')
+        return path_split[path_split.indexOf('projects') + 1]
+    }
+    async function get_task_info(task_id) {
+        const response = await fetch(`/api/tasks/${task_id}?t=${Date.now()}`)
+        const data = await response.json()
+        return data
+    }
+    async function move_task_to_project(task_id, project_id) {
+        console.log('begin move project', task_id, project_id)
+        const {data, annotations} = await get_task_info(task_id)
+        const task_data = [{
+            data,
+            annotations: annotations.filter(r => r.result.length > 0).map(a => {
+            a.result.forEach(item => {
+                delete item.id
+            })
+            return {result: a.result}
+            })
+        }]
+        const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(task_data) })
+        console.log('move_task_success', await import_res.json())
+    }
+
+    function show_message(message) {
+        Toastify({
+            text: message,
+            duration: Math.min(message/4 * 1000, 3000)
+        }).showToast();
+    }
+
+    function to_next_task() {
+        const selectedDom = document.querySelector('.dm-table__row-wrapper_selected')
+        if (selectedDom.nextSibling) {
+            selectedDom.nextSibling.click()
+            document.querySelector('.dm-table__row-wrapper_selected').previousSibling.scrollIntoView()
+        } else {
+            show_message('已经是最后一个了')
+        }
+    }
+
+    function delete_annotation_by_id(id) {
+        return fetch(`/api/annotations/${id}`, {method: 'DELETE'})
+    }
+
+    function delete_prediction_by_id(id) {
+        return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
+    }
+
+    function clear_prediect(predictions) {
+        if (predictions) {
+            const all_delete_task = predictions.map(({id}) => delete_prediction_by_id(id))
+            return Promise.all(all_delete_task)
+        }
+        return Promise.resolve()
+    }
+
+    async function clear_annotation_and_prediect(task_id) {
+        const task_info = await get_task_info(task_id)
+        const {annotations, predictions} = task_info
+        annotations.forEach(({id}) => delete_annotation_by_id(id))
+        clear_prediect(predictions)
+    }
+
     $("head").append(`<link rel="stylesheet" type="text/css" href="https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.css">`)
     $("head").append(`<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>`)
+
+
 
     const project_promise_map = init_tools()
 

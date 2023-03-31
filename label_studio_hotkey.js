@@ -326,7 +326,7 @@ function __lb_add_js(url) {
 
     setTimeout(() => {
         init()
-    }, 2000)
+    }, 1000)
 
 
 })()

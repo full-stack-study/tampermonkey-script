@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      1.0
+// @version      1.1
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -11,8 +11,20 @@
 // ==/UserScript==
 
 
+function __lb_add_css(url) {
+    $("head").append(`<link rel="stylesheet" type="text/css" href="${url}">`)
+}
+
+function __lb_add_js(url) {
+    $("head").append(`<script type="text/javascript" src="${url}"></script>`)
+}
+
+
 (function() {
     'use strict';
+    __lb_add_css('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.css')
+    __lb_add_js('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js')
+    __lb_add_js('https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio/task_label_aggregate.js')
 
     
     function delete_task(task_id) {
@@ -108,12 +120,7 @@
         annotations.forEach(({id}) => delete_annotation_by_id(id))
         clear_prediect(predictions)
     }
-
-    $("head").append(`<link rel="stylesheet" type="text/css" href="https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.css">`)
-    $("head").append(`<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>`)
-
-
-
+    
     const project_promise_map = init_tools()
 
     const state_rate = {

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    $("head").append(`<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/artDialog/7.0.0/dialog.js"></script>`)
+    __lb_add_js(`https://cdn.bootcdn.net/ajax/libs/artDialog/7.0.0/dialog.js`)
 
     async function get_tasks(project_id, page_size) {
         const data = await fetch(`/api/tasks?project=${project_id}&page_size=${page_size}&fields=all`)

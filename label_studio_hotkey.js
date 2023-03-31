@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      0.8
+// @version      0.9
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -190,10 +190,8 @@ async function clear_annotation_and_prediect(task_id) {
                     }                    
                     // 将对应
                 }
-            }, 0)
-            setTimeout(() => {
                 to_next_task()
-            }, 500);
+            }, 500)   
         }
     })
 })();

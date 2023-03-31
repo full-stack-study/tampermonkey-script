@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      0.7
+// @version      0.8
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/projects/*/data?tab=*&task=*
@@ -164,8 +164,8 @@ async function clear_annotation_and_prediect(task_id) {
              to_next_task()
         }
 
-        if (e.key === 'f') {
-            const force = e.ctrlKey
+        if (e.key === 'f') {        
+            document.querySelector('.lsf-controls button').click()
             setTimeout(async () => {
                 if (task_id) {
                     const pj_map = await project_promise_map
@@ -191,8 +191,9 @@ async function clear_annotation_and_prediect(task_id) {
                     // 将对应
                 }
             }, 0)
-            to_next_task()
-
+            setTimeout(() => {
+                to_next_task()
+            }, 500);
         }
     })
 })();

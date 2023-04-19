@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      1.5
+// @version      1.6
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/*
@@ -171,33 +171,39 @@ function __lb_add_js(url) {
              to_next_task()
         }
 
+        function moveProject() {
+            if (task_id) {
+                const pj_map = await project_promise_map
+                const cur_project = pj_map[get_current_project_id()]
+                console.log('cur_project', cur_project)
+                const project_name = cur_project.title
+                const base_name = project_name.split("_")[0]
+                const task_info = await get_task_info(task_id)
+                const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length                    
+                const move_to_name = has_annoataion ? base_name : base_name +'_BG'
+                const current_is_base_project = project_name === base_name
+                if (has_annoataion && current_is_base_project) {
+                    await clear_prediect(task_info.predictions)                        
+                    show_message('清除预测数据成功')
+                } else {
+                    const bj_project = find_project_by_name(pj_map, move_to_name)
+                    if (bj_project) {
+                        await move_task_to_project(task_id, bj_project.id)
+                        delete_task(task_id)
+                        show_message(`移动至 ${move_to_name} 成功`)                        
+                    }
+                }                    
+                // 将对应
+            }
+            to_next_task()
+        }
+        if (e.key === 'x') {
+            moveProject()
+        }
         if (e.key === 'f') {        
             document.querySelector('.lsf-controls button').click()
             setTimeout(async () => {
-                if (task_id) {
-                    const pj_map = await project_promise_map
-                    const cur_project = pj_map[get_current_project_id()]
-                    console.log('cur_project', cur_project)
-                    const project_name = cur_project.title
-                    const base_name = project_name.split("_")[0]
-                    const task_info = await get_task_info(task_id)
-                    const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length                    
-                    const move_to_name = has_annoataion ? base_name : base_name +'_BG'
-                    const current_is_base_project = project_name === base_name
-                    if (has_annoataion && current_is_base_project) {
-                        await clear_prediect(task_info.predictions)                        
-                        show_message('清除预测数据成功')
-                    } else {
-                        const bj_project = find_project_by_name(pj_map, move_to_name)
-                        if (bj_project) {
-                            await move_task_to_project(task_id, bj_project.id)
-                            delete_task(task_id)
-                            show_message(`移动至 ${move_to_name} 成功`)                        
-                        }
-                    }                    
-                    // 将对应
-                }
-                to_next_task()
+                moveProject()
             }, 500)   
         }
     })

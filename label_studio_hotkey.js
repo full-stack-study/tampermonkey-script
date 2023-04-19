@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      1.6
+// @version      1.7
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/*
@@ -171,7 +171,7 @@ function __lb_add_js(url) {
              to_next_task()
         }
 
-        function moveProject() {
+        async function moveProject() {
             if (task_id) {
                 const pj_map = await project_promise_map
                 const cur_project = pj_map[get_current_project_id()]

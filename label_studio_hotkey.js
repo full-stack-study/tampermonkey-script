@@ -160,15 +160,8 @@ function __lb_add_js(url) {
             to_next_task()
             show_message("清除注解和预测成功" + task_id)
         }
-        if (e.key === '+' || e.key === '-') {
-            const is_add = e.key === '+'
-            if (is_add) {
-               state_rate.success += 1
-            } else {
-                state_rate.failed += 1
-            }
-            console.log('state_rate', JSON.stringify(state_rate))
-             to_next_task()
+        if (e.key === '=') {
+            $('.dm-table__cell img').css('max-height', '200%')
         }
 
         async function moveProject() {

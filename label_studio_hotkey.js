@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      1.8
+// @version      1.9
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://lablestudio.shanhs.com.cn/*
@@ -29,7 +29,7 @@ function __lb_add_js(url) {
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
 
-    async function init_tools() {    
+    async function init_tools() {
         const response = await fetch(`/api/projects?t=${Date.now()}`)
         const data = await response.json()
         const project_list = data.results
@@ -118,7 +118,7 @@ function __lb_add_js(url) {
         annotations.forEach(({id}) => delete_annotation_by_id(id))
         clear_prediect(predictions)
     }
-    
+
     const project_promise_map = init_tools()
 
     const state_rate = {
@@ -148,7 +148,7 @@ function __lb_add_js(url) {
         }
 
         if (e.key === 'd') {
-            const params = new URLSearchParams(location.search)            
+            const params = new URLSearchParams(location.search)
             delete_task(task_id)
             show_message("删除任务成功" + task_id)
             to_next_task()
@@ -164,7 +164,7 @@ function __lb_add_js(url) {
             $('.dm-table__cell img').css('max-height', '200%')
         }
 
-        async function moveProject() {
+        async function moveProject(move=true) {
             if (task_id) {
                 const pj_map = await project_promise_map
                 const cur_project = pj_map[get_current_project_id()]
@@ -172,32 +172,36 @@ function __lb_add_js(url) {
                 const project_name = cur_project.title
                 const base_name = project_name.split("_")[0]
                 const task_info = await get_task_info(task_id)
-                const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length                    
+                const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length
                 const move_to_name = has_annoataion ? base_name : base_name +'_BG'
                 const current_is_base_project = project_name === base_name
                 if (has_annoataion && current_is_base_project) {
-                    await clear_prediect(task_info.predictions)                        
+                    await clear_prediect(task_info.predictions)
                     show_message('清除预测数据成功')
                 } else {
                     const bj_project = find_project_by_name(pj_map, move_to_name)
                     if (bj_project) {
                         await move_task_to_project(task_id, bj_project.id)
                         delete_task(task_id)
-                        show_message(`移动至 ${move_to_name} 成功`)                        
+                        show_message(`移动至 ${move_to_name} 成功`)
                     }
-                }                    
+                }
                 // 将对应
             }
-            to_next_task()
+            if (move) {
+                to_next_task()
+            }
+            
         }
         if (e.key === 'x') {
             moveProject()
+            to_next_task()
         }
-        if (e.key === 'f') {        
+        if (e.key === 'f') {
             document.querySelector('.lsf-controls button').click()
             setTimeout(async () => {
                 moveProject()
-            }, 500)   
+            }, 500)
         }
     })
 })();

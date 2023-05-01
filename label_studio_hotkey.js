@@ -194,7 +194,7 @@ function __lb_add_js(url) {
             
         }
         if (e.key === 'x') {
-            moveProject()
+            moveProject(false)
             to_next_task()
         }
         if (e.key === 'f') {

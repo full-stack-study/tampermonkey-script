@@ -4,9 +4,8 @@
 // @version      1.9
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
-// @match        http://lablestudio.shanhs.com.cn/*
+// @match        http://labelstudio2.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js
 // @grant        none
 // ==/UserScript==
 
@@ -154,12 +153,6 @@ function __lb_add_js(url) {
             to_next_task()
         }
 
-        if (e.key === 'c') {
-            // 清除注解和预测数据https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.jshttps://cdn4.shanhs.com/offline-upload/pro/20230310/8151682bf2a04aeaada0bafab35d0a1c.jpg
-            clear_annotation_and_prediect(task_id)
-            to_next_task()
-            show_message("清除注解和预测成功" + task_id)
-        }
         if (e.key === '=') {
             $('.dm-table__cell img').css('max-height', '200%')
         }
@@ -191,7 +184,7 @@ function __lb_add_js(url) {
             if (move) {
                 to_next_task()
             }
-            
+
         }
         if (e.key === 'x') {
             moveProject(false)

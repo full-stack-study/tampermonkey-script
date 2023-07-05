@@ -27,6 +27,25 @@ function __lb_add_js(url) {
     function delete_task(task_id) {
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
+    
+    function add_function_button() {
+        var button = document.createElement("button");
+        button.innerHTML = "打开图片";
+
+        // 设置按钮样式
+        button.style.position = "fixed";
+        button.style.top = "50%";
+        button.style.left = "50%";
+        button.style.transform = "translate(-50%, -50%)";
+
+        // 将按钮添加到页面中
+        document.body.appendChild(button);
+        button.onclick = () => {
+            console.log('hello world')
+        }
+    }
+
+    add_function_button()
 
     async function init_tools() {
         const response = await fetch(`/api/projects?t=${Date.now()}`)

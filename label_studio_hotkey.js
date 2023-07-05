@@ -6,6 +6,7 @@
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
+// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js
 // @grant        none
 // ==/UserScript==
 
@@ -27,7 +28,7 @@ function __lb_add_js(url) {
     function delete_task(task_id) {
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
-    
+
     function add_function_button() {
         var button = document.createElement("button");
         button.innerHTML = "打开图片";
@@ -35,7 +36,7 @@ function __lb_add_js(url) {
         // 设置按钮样式
         button.style.position = "fixed";
         button.style.top = "15px";
-        button.style.right = "15px";        
+        button.style.right = "15px";
         button.style.zIndex = 100000;
 
         // 将按钮添加到页面中

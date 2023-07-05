@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.1
+// @version      2.0.2
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
@@ -34,14 +34,14 @@ function __lb_add_js(url) {
 
         // 设置按钮样式
         button.style.position = "fixed";
-        button.style.top = "50%";
-        button.style.left = "50%";
-        button.style.transform = "translate(-50%, -50%)";
+        button.style.top = "15px";
+        button.style.right = "15px";        
 
         // 将按钮添加到页面中
         document.body.appendChild(button);
         button.onclick = () => {
-            console.log('hello world')
+            const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
+            window.open(img_url)
         }
     }
 

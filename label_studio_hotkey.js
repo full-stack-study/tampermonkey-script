@@ -36,6 +36,7 @@ function __lb_add_js(url) {
         button.style.position = "fixed";
         button.style.top = "15px";
         button.style.right = "15px";        
+        button.style.zIndex = 100000;
 
         // 将按钮添加到页面中
         document.body.appendChild(button);

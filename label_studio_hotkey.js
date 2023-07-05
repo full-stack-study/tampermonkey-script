@@ -35,8 +35,8 @@ function __lb_add_js(url) {
 
         // 设置按钮样式
         button.style.position = "fixed";
-        button.style.top = "15px";
-        button.style.right = "15px";
+        button.style.top = "10px";
+        button.style.left = "50%";
         button.style.zIndex = 100000;
 
         // 将按钮添加到页面中

@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.8
+// @version      2.0.9
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.8
+// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.9
 // @grant        none
 // ==/UserScript==
 
@@ -62,7 +62,7 @@ function __lb_add_js(url) {
         create_button('移动到项目18', () => {
             const task_id = get_task_id()
             move_task_to_project(task_id, 18, task => {
-                anno = task.annotations
+                const anno = task.annotations
                 anno.forEach(item => {
                     const result = item.result
                     result.forEach(ritem => {
@@ -70,6 +70,8 @@ function __lb_add_js(url) {
                     })
                 })
             })
+            show_message("移动成功" + task_id)
+            to_next_task()
         })
     }
 

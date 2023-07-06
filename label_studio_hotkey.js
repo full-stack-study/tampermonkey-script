@@ -6,7 +6,7 @@
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js
+// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.7
 // @grant        none
 // ==/UserScript==
 

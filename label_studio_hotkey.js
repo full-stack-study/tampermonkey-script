@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.7
+// @version      2.0.8
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.7
+// @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.8
 // @grant        none
 // ==/UserScript==
 
@@ -41,6 +41,7 @@ function __lb_add_js(url) {
             divElement.style.position = "fixed";
             divElement.style.top = '10px';
             divElement.style.left = "50%";
+            divElement.style.zIndex = 100000;
             // 添加其他样式属性，如宽度、高度、背景颜色等
 
             // 将<div>元素添加到网页的<body>中

@@ -66,6 +66,7 @@ function __lb_add_js(url) {
                 })
             })
         })
+        delete_task(task_id)
         show_message("移动成功" + task_id)
         to_next_task()
     }

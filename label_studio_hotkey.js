@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.5
+// @version      2.0.6
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
@@ -28,23 +28,48 @@ function __lb_add_js(url) {
     function delete_task(task_id) {
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
+    let has_button_wrapper_id = undefined
+    function create_button(text, onclick) {
+        if (!has_button_wrapper_id) {
+            has_button_wrapper_id = "shs_button_wrapper"
+            var divElement = document.createElement("div");
+
+            // 设置ID属性
+            divElement.id = has_button_wrapper_id;
+
+            // 设置样式
+            divElement.style.position = "fixed";
+            divElement.style.top = '10px';
+            divElement.style.left = "50%";
+            // 添加其他样式属性，如宽度、高度、背景颜色等
+
+            // 将<div>元素添加到网页的<body>中
+            document.body.appendChild(divElement);
+        }
+        var button = document.createElement("button");
+        button.innerHTML = text;
+        button.onclick = onclick
+        divEle = document.getElementById(has_button_wrapper_id)
+        divEle.appendChild(button)        
+    }
 
     function add_function_button() {
-        var button = document.createElement("button");
-        button.innerHTML = "打开图片";
-
-        // 设置按钮样式
-        button.style.position = "fixed";
-        button.style.top = "10px";
-        button.style.left = "50%";
-        button.style.zIndex = 100000;
-
-        // 将按钮添加到页面中
-        document.body.appendChild(button);
-        button.onclick = () => {
+        create_button('打开图片', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
-        }
+        })
+        create_button('移动到项目18', () => {
+            const task_id = get_task_id()
+            move_task_to_project(task_id, 18, task => {
+                anno = task.annotations
+                anno.forEach(item => {
+                    const result = item.result
+                    result.forEach(ritem => {
+                        ritem.value.rectanglelabels = ['leak']
+                    })
+                })
+            })
+        })
     }
 
     add_function_button()
@@ -83,19 +108,23 @@ function __lb_add_js(url) {
         const data = await response.json()
         return data
     }
-    async function move_task_to_project(task_id, project_id) {
+    async function move_task_to_project(task_id, project_id, process_data) {
         console.log('begin move project', task_id, project_id)
         const {data, annotations} = await get_task_info(task_id)
-        const task_data = [{
-            data,
-            annotations: annotations.filter(r => r.result.length > 0).map(a => {
+        const newAnnotations = annotations.filter(r => r.result.length > 0).map(a => {
             a.result.forEach(item => {
                 delete item.id
             })
             return {result: a.result}
-            })
-        }]
-        const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(task_data) })
+        })
+        const task_data = {
+            data,
+            annotations: newAnnotations
+        }
+        if (process_data) {
+            process_data(task_data)
+        }
+        const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify([task_data]) })
         console.log('move_task_success', await import_res.json())
     }
 

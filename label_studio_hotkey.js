@@ -55,7 +55,7 @@ function __lb_add_js(url) {
         divEle.appendChild(button)        
     }
 
-    function move_to_project_18() {
+    async function move_to_project_18() {
         const task_id = get_task_id()
         move_task_to_project(task_id, 18, task => {
             const anno = task.annotations
@@ -65,8 +65,9 @@ function __lb_add_js(url) {
                     ritem.value.rectanglelabels = ['leak']
                 })
             })
+        }).then(() => {
+            delete_task(task_id)
         })
-        delete_task(task_id)
         show_message("移动成功" + task_id)
         to_next_task()
     }

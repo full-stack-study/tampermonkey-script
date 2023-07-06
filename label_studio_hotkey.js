@@ -70,7 +70,7 @@ function __lb_add_js(url) {
         to_next_task()
     }
     function delete_and_to_next() {
-        task_id = get_task_id()
+        const task_id = get_task_id()
         delete_task(task_id)
         show_message("删除任务成功" + task_id)
         to_next_task()

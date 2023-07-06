@@ -26,6 +26,7 @@ function __lb_add_js(url) {
     __lb_add_js('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js')
 
     function delete_task(task_id) {
+        task_id = task_id || get_task_id()
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
     let has_button_wrapper_id = undefined
@@ -54,25 +55,35 @@ function __lb_add_js(url) {
         divEle.appendChild(button)        
     }
 
+    function move_to_project_18() {
+        const task_id = get_task_id()
+        move_task_to_project(task_id, 18, task => {
+            const anno = task.annotations
+            anno.forEach(item => {
+                const result = item.result
+                result.forEach(ritem => {
+                    ritem.value.rectanglelabels = ['leak']
+                })
+            })
+        })
+        show_message("移动成功" + task_id)
+        to_next_task()
+    }
+    function delete_and_to_next() {
+        task_id = get_task_id()
+        delete_task(task_id)
+        show_message("删除任务成功" + task_id)
+        to_next_task()
+    }
+
     function add_function_button() {
-        create_button('打开图片', () => {
+        create_button('删除任务', delete_and_to_next)
+        create_button('打开检测拍照', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
         })
-        create_button('移动到项目18', () => {
-            const task_id = get_task_id()
-            move_task_to_project(task_id, 18, task => {
-                const anno = task.annotations
-                anno.forEach(item => {
-                    const result = item.result
-                    result.forEach(ritem => {
-                        ritem.value.rectanglelabels = ['leak']
-                    })
-                })
-            })
-            show_message("移动成功" + task_id)
-            to_next_task()
-        })
+        create_button('移动到项目18', move_to_project_18)
+        
     }
 
     add_function_button()
@@ -201,9 +212,7 @@ function __lb_add_js(url) {
 
         if (e.key === 'd') {
             const params = new URLSearchParams(location.search)
-            delete_task(task_id)
-            show_message("删除任务成功" + task_id)
-            to_next_task()
+            delete_and_to_next()
         }
 
         if (e.key === '=') {

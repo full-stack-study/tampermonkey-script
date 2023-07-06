@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.6
+// @version      2.0.7
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
@@ -49,7 +49,7 @@ function __lb_add_js(url) {
         var button = document.createElement("button");
         button.innerHTML = text;
         button.onclick = onclick
-        divEle = document.getElementById(has_button_wrapper_id)
+        const divEle = document.getElementById(has_button_wrapper_id)
         divEle.appendChild(button)        
     }
 

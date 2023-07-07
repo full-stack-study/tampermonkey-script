@@ -70,6 +70,8 @@ function showImage(url) {
 
     // 鼠标按下时记录初始位置
     img.addEventListener('mousedown', function (event) {
+        event.stopPropagation(); // 阻止事件冒泡
+
         // 设置鼠标样式
         img.style.cursor = 'grabbing';
         // 获取初始位置
@@ -81,8 +83,8 @@ function showImage(url) {
         offsetX = matrix.e;
         offsetY = matrix.f;
         // 注册mousemove和mouseup事件
-        document.addEventListener('mousemove', dragImage);
-        document.addEventListener('mouseup', stopDragging);
+        img.addEventListener('mousemove', dragImage);
+        img.addEventListener('mouseup', stopDragging);
     });
 
     // 拖动图片
@@ -104,8 +106,8 @@ function showImage(url) {
     function stopDragging() {
         img.style.cursor = 'grab';
         // 移除mousemove和mouseup事件
-        document.removeEventListener('mousemove', dragImage);
-        document.removeEventListener('mouseup', stopDragging);
+        img.removeEventListener('mousemove', dragImage);
+        img.removeEventListener('mouseup', stopDragging);
     }
 
     // 将图片添加到遮罩层中

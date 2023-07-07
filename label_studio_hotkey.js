@@ -261,10 +261,7 @@ function __lb_add_js(url) {
 
         }
         if (e.key === 'f') {
-            document.querySelector('.lsf-controls button').click()
-            setTimeout(async () => {
-                moveProject()
-            }, 500)
+            moveProject()
         }
     })
 })();

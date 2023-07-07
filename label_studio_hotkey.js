@@ -56,6 +56,9 @@ function __lb_add_js(url) {
         if (hotkey) {
             button.innerHTML = `${text} (${hotkey})`;
             document.addEventListener('keydown', async e => {
+                if (e.ctrlKey) {
+                    return;
+                }
                 if (e.key === hotkey || e.code === hotkey) {
                     onclick()
                 }
@@ -209,7 +212,10 @@ function __lb_add_js(url) {
         if (!task_id) {
             return
         }
-        console.log(`e.key `)
+        if (e.ctrlKey) {
+            return;
+        }
+        
 
         if (e.key === 'q') {
             document.querySelector('.dm-table__row-wrapper_selected').previousSibling.click()

@@ -98,7 +98,7 @@ function __lb_add_js(url) {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
         }, 'Space')
-        create_button('移动到项目18', move_to_project_18, 't')
+        create_button('移动到项目18', move_to_project_18, 'r')
         
     }
 

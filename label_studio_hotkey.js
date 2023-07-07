@@ -86,12 +86,22 @@ function __lb_add_js(url) {
         to_next_task()
     }
 
+    function clear_annotation_and_prediect_and_to_next(task_id) {
+        clear_annotation_and_prediect(task_id)
+        to_next_task()
+        show_message("清除注解和预测成功" + task_id)
+    }
+
     function add_function_button() {
         create_button('删除任务', delete_and_to_next, 'd')
         create_button('打开检测拍照', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
         })
+        create_button('清除标注', () => {
+            const task_id = get_task_id()
+            clear_annotation_and_prediect_and_to_next(task_id)
+        }, 'r')
         create_button('移动到项目18', move_to_project_18, 't')
         
     }

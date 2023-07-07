@@ -76,6 +76,9 @@ function __lb_add_js(url) {
                     ritem.value.rectanglelabels = ['leak']
                 })
             })
+            if (!anno.length) {
+                return 3
+            }
         }).then(() => {
             delete_task(task_id)
         })
@@ -155,7 +158,8 @@ function __lb_add_js(url) {
             annotations: newAnnotations
         }
         if (process_data) {
-            process_data(task_data)
+            const target_project_id = process_data(task_data)
+            project_id = target_project_id || project_id
         }
         const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify([task_data]) })
         console.log('move_task_success', await import_res.json())

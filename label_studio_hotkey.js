@@ -29,8 +29,9 @@ function showImage(url) {
     let overlay = document.getElementById(overlay_id)
     if (overlay) {
         document.body.removeChild(overlay)
-        overlay = document.createElement('div')
+        return;        
     }
+    overlay = document.createElement('div')
     overlay.id = overlay_id
     overlay.style.position = 'fixed';
     overlay.style.top = 0;

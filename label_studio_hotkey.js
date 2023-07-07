@@ -19,6 +19,49 @@ function __lb_add_js(url) {
     $("head").append(`<script type="text/javascript" src="${url}"></script>`)
 }
 
+function showImage(url) {
+    // 创建并设置图片元素
+    const img = document.createElement('img');
+    img.src = url;
+  
+    const overlay_id = 'shs_image_overlay'
+    // 创建遮罩层元素并添加样式
+    let overlay = document.getElementById(overlay_id)
+    if (overlay) {
+        document.body.removeChild(overlay)
+        overlay = document.createElement('div')
+    }
+    overlay.id = overlay_id
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 100000000;
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+  
+    // 点击遮罩层关闭弹窗
+    overlay.addEventListener('click', function () {
+      document.body.removeChild(overlay);
+    });
+  
+    // 鼠标滚动缩放图片
+    img.addEventListener('wheel', function (event) {
+      event.preventDefault();
+      let scale = 1 + event.deltaY * 0.01;
+      img.style.transform = `scale(${scale})`;
+    });
+  
+    // 将图片添加到遮罩层中
+    overlay.appendChild(img);
+  
+    // 将遮罩层添加到body中
+    document.body.appendChild(overlay);
+  }
+
 
 (function() {
     'use strict';
@@ -103,7 +146,7 @@ function __lb_add_js(url) {
         create_button('删除任务', delete_and_to_next, 'd')
         create_button('打开检测拍照', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
-            window.open(img_url)
+            showImage(img_url)
         }, 'Space')
         create_button('移动到项目18', move_to_project_18, 'r')
         

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.0.9
+// @version      2.1.0
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio2.shanhs.com.cn/*
@@ -30,7 +30,7 @@ function __lb_add_js(url) {
         return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
     }
     let has_button_wrapper_id = undefined
-    function create_button(text, onclick) {
+    function create_button(text, onclick, hotkey) {
         if (!has_button_wrapper_id) {
             has_button_wrapper_id = "shs_button_wrapper"
             var divElement = document.createElement("div");
@@ -52,7 +52,15 @@ function __lb_add_js(url) {
         button.innerHTML = text;
         button.onclick = onclick
         const divEle = document.getElementById(has_button_wrapper_id)
-        divEle.appendChild(button)        
+        divEle.appendChild(button)  
+        if (hotkey) {
+            button.innerHTML = `${text} (${hotkey})`;
+            document.addEventListener('keydown', async e => {
+                if (e.key === hotkey) {
+                    onclick()
+                }
+            }            
+        }      
     }
 
     async function move_to_project_18() {

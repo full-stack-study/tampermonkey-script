@@ -76,6 +76,7 @@ function __lb_add_js(url) {
                     ritem.value.rectanglelabels = ['leak']
                 })
             })
+            task.predictions = []
             if (!anno.length) {
                 return 3
             }

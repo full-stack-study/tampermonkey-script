@@ -97,7 +97,7 @@ function __lb_add_js(url) {
         create_button('打开检测拍照', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
-        })      
+        })
         create_button('移动到项目18', move_to_project_18, 't')
         
     }
@@ -209,6 +209,7 @@ function __lb_add_js(url) {
         if (!task_id) {
             return
         }
+        console.log(`e.key  ${e.key}`)
 
         if (e.key === 'q') {
             document.querySelector('.dm-table__row-wrapper_selected').previousSibling.click()

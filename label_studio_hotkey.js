@@ -59,7 +59,7 @@ function __lb_add_js(url) {
                 if (e.key === hotkey) {
                     onclick()
                 }
-            }            
+            })
         }      
     }
 
@@ -87,12 +87,12 @@ function __lb_add_js(url) {
     }
 
     function add_function_button() {
-        create_button('删除任务', delete_and_to_next)
+        create_button('删除任务', delete_and_to_next, 'd')
         create_button('打开检测拍照', () => {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             window.open(img_url)
         })
-        create_button('移动到项目18', move_to_project_18)
+        create_button('移动到项目18', move_to_project_18, 't')
         
     }
 
@@ -218,11 +218,6 @@ function __lb_add_js(url) {
         }
         if (e.key === 'e') {
             to_next_task()
-        }
-
-        if (e.key === 'd') {
-            const params = new URLSearchParams(location.search)
-            delete_and_to_next()
         }
 
         if (e.key === '=') {

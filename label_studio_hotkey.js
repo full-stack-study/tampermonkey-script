@@ -23,13 +23,13 @@ function showImage(url) {
     // 创建并设置图片元素
     const img = document.createElement('img');
     img.src = url;
-  
+
     const overlay_id = 'shs_image_overlay'
     // 创建遮罩层元素并添加样式
     let overlay = document.getElementById(overlay_id)
     if (overlay) {
         document.body.removeChild(overlay)
-        return;        
+        return;
     }
     overlay = document.createElement('div')
     overlay.id = overlay_id
@@ -43,35 +43,87 @@ function showImage(url) {
     overlay.style.zIndex = 100000000;
     overlay.style.justifyContent = 'center';
     overlay.style.alignItems = 'center';
-  
+
+    // 初始缩放比例
+    let scale = 1;
+    // 初始鼠标按住后的位置
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    // 初始图片偏移量
+    let offsetX = 0;
+    let offsetY = 0;
+
     // 点击遮罩层关闭弹窗
     overlay.addEventListener('click', function () {
-      document.body.removeChild(overlay);
+        document.body.removeChild(overlay);
     });
-  
+
     // 鼠标滚动缩放图片
     img.addEventListener('wheel', function (event) {
-      event.preventDefault();
-      let scale = 1 + event.deltaY * 0.01;
-      img.style.transform = `scale(${scale})`;
+        event.preventDefault();
+        // 根据滚轮方向计算缩放比例
+        scale += event.deltaY * -0.01;
+        // 设置缩放边界
+        scale = Math.min(Math.max(0.2, scale), 5);
+        img.style.transform = `scale(${scale})`;
     });
-  
+
+    // 鼠标按下时记录初始位置
+    img.addEventListener('mousedown', function (event) {
+        // 设置鼠标样式
+        img.style.cursor = 'grabbing';
+        // 获取初始位置
+        prevMouseX = event.clientX;
+        prevMouseY = event.clientY;
+        // 获取初始图片偏移量
+        const transformStyle = window.getComputedStyle(img).getPropertyValue('transform');
+        const matrix = new DOMMatrix(transformStyle.replace('matrix(', '').replace(')', ''));
+        offsetX = matrix.e;
+        offsetY = matrix.f;
+        // 注册mousemove和mouseup事件
+        document.addEventListener('mousemove', dragImage);
+        document.addEventListener('mouseup', stopDragging);
+    });
+
+    // 拖动图片
+    function dragImage(event) {
+        // 计算鼠标偏移量
+        const deltaX = event.clientX - prevMouseX;
+        const deltaY = event.clientY - prevMouseY;
+        // 更新图片偏移量
+        offsetX += deltaX;
+        offsetY += deltaY;
+        // 应用偏移量
+        img.style.transform = `scale(${scale}) translate(${offsetX}px, ${offsetY}px)`;
+        // 更新鼠标位置
+        prevMouseX = event.clientX;
+        prevMouseY = event.clientY;
+    }
+
+    // 停止拖动图片
+    function stopDragging() {
+        img.style.cursor = 'grab';
+        // 移除mousemove和mouseup事件
+        document.removeEventListener('mousemove', dragImage);
+        document.removeEventListener('mouseup', stopDragging);
+    }
+
     // 将图片添加到遮罩层中
     overlay.appendChild(img);
-  
+
     // 将遮罩层添加到body中
     document.body.appendChild(overlay);
-  }
+}
 
 
-(function() {
+(function () {
     'use strict';
     __lb_add_css('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.css')
     __lb_add_js('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js')
 
     function delete_task(task_id) {
         task_id = task_id || get_task_id()
-        return fetch(`/api/tasks/${task_id}`, {method: 'DELETE'})
+        return fetch(`/api/tasks/${task_id}`, { method: 'DELETE' })
     }
     let has_button_wrapper_id = undefined
     function create_button(text, onclick, hotkey) {
@@ -96,7 +148,7 @@ function showImage(url) {
         button.innerHTML = text;
         button.onclick = onclick
         const divEle = document.getElementById(has_button_wrapper_id)
-        divEle.appendChild(button)  
+        divEle.appendChild(button)
         if (hotkey) {
             button.innerHTML = `${text} (${hotkey})`;
             document.addEventListener('keydown', async e => {
@@ -107,7 +159,7 @@ function showImage(url) {
                     onclick()
                 }
             })
-        }      
+        }
     }
 
     async function move_to_project_18() {
@@ -150,7 +202,7 @@ function showImage(url) {
             showImage(img_url)
         }, 'Space')
         create_button('移动到项目18', move_to_project_18, 'r')
-        
+
     }
 
     add_function_button()
@@ -179,7 +231,7 @@ function showImage(url) {
         return task_id
     }
 
-    function get_current_project_id(){
+    function get_current_project_id() {
         const cur_path = location.pathname
         const path_split = cur_path.split('/')
         return path_split[path_split.indexOf('projects') + 1]
@@ -191,12 +243,12 @@ function showImage(url) {
     }
     async function move_task_to_project(task_id, project_id, process_data) {
         console.log('begin move project', task_id, project_id)
-        const {data, annotations} = await get_task_info(task_id)
+        const { data, annotations } = await get_task_info(task_id)
         const newAnnotations = annotations.filter(r => r.result.length > 0).map(a => {
             a.result.forEach(item => {
                 delete item.id
             })
-            return {result: a.result}
+            return { result: a.result }
         })
         const task_data = {
             data,
@@ -206,14 +258,14 @@ function showImage(url) {
             const target_project_id = process_data(task_data)
             project_id = target_project_id || project_id
         }
-        const import_res = await fetch(`/api/projects/${project_id}/import`, {method:'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify([task_data]) })
+        const import_res = await fetch(`/api/projects/${project_id}/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify([task_data]) })
         console.log('move_task_success', await import_res.json())
     }
 
     function show_message(message) {
         Toastify({
             text: message,
-            duration: Math.min(message/4 * 1000, 3000)
+            duration: Math.min(message / 4 * 1000, 3000)
         }).showToast();
     }
 
@@ -228,16 +280,16 @@ function showImage(url) {
     }
 
     function delete_annotation_by_id(id) {
-        return fetch(`/api/annotations/${id}`, {method: 'DELETE'})
+        return fetch(`/api/annotations/${id}`, { method: 'DELETE' })
     }
 
     function delete_prediction_by_id(id) {
-        return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
+        return fetch(`/api/predictions/${id}`, { method: 'DELETE' })
     }
 
     function clear_prediect(predictions) {
         if (predictions) {
-            const all_delete_task = predictions.map(({id}) => delete_prediction_by_id(id))
+            const all_delete_task = predictions.map(({ id }) => delete_prediction_by_id(id))
             return Promise.all(all_delete_task)
         }
         return Promise.resolve()
@@ -245,8 +297,8 @@ function showImage(url) {
 
     async function clear_annotation_and_prediect(task_id) {
         const task_info = await get_task_info(task_id)
-        const {annotations, predictions} = task_info
-        annotations.forEach(({id}) => delete_annotation_by_id(id))
+        const { annotations, predictions } = task_info
+        annotations.forEach(({ id }) => delete_annotation_by_id(id))
         clear_prediect(predictions)
     }
 
@@ -264,7 +316,7 @@ function showImage(url) {
         if (e.ctrlKey) {
             return;
         }
-        
+
 
         if (e.key === 'q') {
             document.querySelector('.dm-table__row-wrapper_selected').previousSibling.click()
@@ -286,7 +338,7 @@ function showImage(url) {
             $('.dm-table__cell img').css('max-height', '200%')
         }
 
-        async function moveProject(move=true) {
+        async function moveProject(move = true) {
             if (task_id) {
                 const pj_map = await project_promise_map
                 const cur_project = pj_map[get_current_project_id()]
@@ -295,7 +347,7 @@ function showImage(url) {
                 const base_name = project_name.split("_")[0]
                 const task_info = await get_task_info(task_id)
                 const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length
-                const move_to_name = has_annoataion ? base_name : base_name +'_BG'
+                const move_to_name = has_annoataion ? base_name : base_name + '_BG'
                 const current_is_base_project = project_name === base_name
                 if (has_annoataion && current_is_base_project) {
                     await clear_prediect(task_info.predictions)

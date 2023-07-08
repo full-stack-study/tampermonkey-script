@@ -176,7 +176,8 @@ function showImage(url) {
             })
             task.predictions = []
             if (!anno.length) {
-                return 3
+                return 19
+                
             }
         }).then(() => {
             delete_task(task_id)

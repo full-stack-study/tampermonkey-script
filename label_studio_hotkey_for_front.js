@@ -168,16 +168,9 @@ function showImage(url) {
     const blank_project_id = 23
     async function move_to_project() {
         const task_id = get_task_id()
-        move_task_to_project(task_id, new_project_id, task => {
-            const anno = task.annotations
-            anno.forEach(item => {
-                const result = item.result
-                result.forEach(ritem => {
-                    ritem.value.rectanglelabels = ['leak']
-                })
-            })
+        move_task_to_project(task_id, new_project_id, task => {                        
             task.predictions = []
-            if (!anno.length) {
+            if (!task.annotations.length) {
                 return blank_project_id
                 
             }

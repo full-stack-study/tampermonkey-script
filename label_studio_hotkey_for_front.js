@@ -164,8 +164,8 @@ function showImage(url) {
         }
     }
 
-    const new_project_id = 18
-    const blank_project_id = 19
+    const new_project_id = 22
+    const blank_project_id = 23
     async function move_to_project() {
         const task_id = get_task_id()
         move_task_to_project(task_id, new_project_id, task => {

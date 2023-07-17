@@ -163,9 +163,46 @@ function showImage(url) {
             })
         }
     }
+    
+    const leak_project_ids = [18, 19]
+    const front_project_ids = [22, 23]
+    const current_project_key = 'SHS_CURRENT_PROJECT'
+    function get_current_project_id_from_ls() {
+        const cur = localStorage.getItem(current_project_key)
+        if (cur === 'leak') {
+            return leak_project_ids
+        }
+        return front_project_ids
+    }
+    const project_list = ['leak', 'front']
+    function switch_current_project() {
+        const cur = localStorage.getItem(current_project_key)
+        const cur_index = project_list.indexOf(cur)
+        console.log('cur_index', cur_index)
+        let next_index = 0
+        if (cur_index > -1) {
+            next_index = cur_index + 1
+            if (next_index >= project_list.length) {
+                next_index = 0
+            }
+        }
+        console.log('next_index', next_index, project_list.length)
+        const next_project = project_list[next_index]
+        localStorage.setItem(current_project_key, next_project)
+        show_message(`切换项目成功：${next_project}`)
+        location.reload()
+    }
 
-    const new_project_id = 22
-    const blank_project_id = 23
+    document.addEventListener('keydown', e => {
+        console.log('he', e)
+        if (e.ctrlKey && e.shiftKey && e.code == 'KeyS') {
+            switch_current_project()
+        }
+    })
+
+    const [new_project_id, blank_project_id] = get_current_project_id_from_ls()
+    console.log('current', get_current_project_id_from_ls())
+
     async function move_to_project() {
         const task_id = get_task_id()
         move_task_to_project(task_id, new_project_id, task => {                        

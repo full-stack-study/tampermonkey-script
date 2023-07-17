@@ -214,7 +214,7 @@ function showImage(url) {
         }).then(() => {
             delete_task(task_id)
         })
-        show_message("移动成功" + task_id)
+        show_message(`移动成功: ${task_id} -> ${new_project_id}`)
         to_next_task()
     }
     function delete_and_to_next() {

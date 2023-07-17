@@ -174,7 +174,7 @@ function showImage(url) {
         }
         return front_project_ids
     }
-    const project_list = ['leak', 'front']
+    const project_list = ['leak', 'front']    
     function switch_current_project() {
         const cur = localStorage.getItem(current_project_key)
         const cur_index = project_list.indexOf(cur)
@@ -236,7 +236,7 @@ function showImage(url) {
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             showImage(img_url)
         }, 'Space')
-        create_button(`移动到项目_${new_project_id}`, move_to_project, 'r')
+        create_button(`移动到项目_${new_project_id}_${localStorage.getItem(current_project_key)}`, move_to_project, 'r')
 
     }
 

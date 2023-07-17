@@ -211,10 +211,11 @@ function showImage(url) {
                 return blank_project_id
                 
             }
-        }).then(() => {
+        }).then((pid) => {
             delete_task(task_id)
+            show_message(`移动成功: ${task_id} -> ${pid}`)
         })
-        show_message(`移动成功: ${task_id} -> ${new_project_id}`)
+        
         to_next_task()
     }
     function delete_and_to_next() {
@@ -295,6 +296,7 @@ function showImage(url) {
         }
         const import_res = await fetch(`/api/projects/${project_id}/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify([task_data]) })
         console.log('move_task_success', await import_res.json())
+        return project_id
     }
 
     function show_message(message) {

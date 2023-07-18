@@ -291,7 +291,7 @@ function showImage(url) {
             annotations: newAnnotations
         }
         if (process_data) {
-            const target_project_id = process_data(task_data)
+            const target_project_id = await process_data(task_data)
             project_id = target_project_id || project_id
         }
         const import_res = await fetch(`/api/projects/${project_id}/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify([task_data]) })

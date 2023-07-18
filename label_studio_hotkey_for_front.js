@@ -281,6 +281,7 @@ function showImage(url) {
         console.log('begin move project', task_id, project_id)
         const { data, annotations } = await get_task_info(task_id)
         delete data.id
+        delete data.dataId
         const newAnnotations = annotations.filter(r => r.result.length > 0).map(a => {
             a.result.forEach(item => {
                 delete item.id

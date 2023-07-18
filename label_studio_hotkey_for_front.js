@@ -280,6 +280,7 @@ function showImage(url) {
     async function move_task_to_project(task_id, project_id, process_data) {
         console.log('begin move project', task_id, project_id)
         const { data, annotations } = await get_task_info(task_id)
+        delete data.id
         const newAnnotations = annotations.filter(r => r.result.length > 0).map(a => {
             a.result.forEach(item => {
                 delete item.id

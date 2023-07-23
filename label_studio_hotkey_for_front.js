@@ -233,10 +233,13 @@ function showImage(url) {
 
     function add_function_button() {
         create_button('删除任务', delete_and_to_next, 'd')
-        create_button('打开检测拍照', () => {
-            const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
-            showImage(img_url)
-        }, 'Space')
+        const cur_project_value = localStorage.getItem(current_project_key)
+        if (cur_project_value === 'leak') {
+            create_button('打开检测拍照', () => {
+                const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
+                showImage(img_url)
+            }, 'Space')
+        }
         create_button(`移动到项目_${new_project_id}_${localStorage.getItem(current_project_key)}`, move_to_project, 'r')
 
     }

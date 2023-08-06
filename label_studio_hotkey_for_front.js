@@ -392,12 +392,12 @@ function showImage(url) {
                 const move_to_name = has_annoataion ? base_name : base_name + '_BG'
                 const current_is_base_project = project_name === base_name
                 if (has_annoataion && current_is_base_project) {
-                    await clear_prediect(task_info.predictions)
+                    clear_prediect(task_info.predictions)
                     show_message('清除预测数据成功')
                 } else {
                     const bj_project = find_project_by_name(pj_map, move_to_name)
                     if (bj_project) {
-                        await move_task_to_project(task_id, bj_project.id)
+                        move_task_to_project(task_id, bj_project.id)
                         delete_task(task_id)
                         show_message(`移动至 ${move_to_name} 成功`)
                     }

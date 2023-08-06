@@ -164,8 +164,8 @@ function showImage(url) {
         }
     }
     
-    const leak_project_ids = [18, 19]
-    const front_project_ids = [22, 23]
+    const leak_project_ids = [23, 24]
+    const front_project_ids = [26, 27]
     const current_project_key = 'SHS_CURRENT_PROJECT'
     function get_current_project_id_from_ls() {
         const cur = localStorage.getItem(current_project_key)

@@ -153,14 +153,19 @@ function showImage(url) {
         divEle.appendChild(button)
         if (hotkey) {
             button.innerHTML = `${text} (${hotkey})`;
-            document.addEventListener('keydown', async e => {
+            const eventFn = e => {
+                if (!document.contains(button)) {
+                    document.removeEventListener('keydown', eventFn)
+                    return
+                }
                 if (e.ctrlKey) {
                     return;
                 }
                 if (e.key === hotkey || e.code === hotkey) {
                     onclick()
                 }
-            })
+            }
+            document.addEventListener('keydown', eventFn)
         }
     }
 

@@ -212,7 +212,7 @@ function showImage(url) {
             const project_id = pathname[2]
             const old_project_id = global_data.current_project_id
             global_data.current_project_id = project_id
-            if (global_data.current_project_id === project_id) {
+            if (old_project_id === project_id) {
                 return
             }
             clean_function_button()

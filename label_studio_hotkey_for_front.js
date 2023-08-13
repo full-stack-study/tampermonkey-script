@@ -4,7 +4,7 @@
 // @version      2.1.0
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
-// @match        http://labelstudio2.shanhs.com.cn/*
+// @match        http://labelstudio.shanhs.com.cn/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
 // @updateURL    https://raw.githubusercontent.com/full-stack-study/tampermonkey-script/main/label_studio_hotkey.js?v=2.0.9
 // @grant        none
@@ -164,7 +164,7 @@ function showImage(url) {
         }
     }
     
-    const leak_project_ids = [23, 24]
+    const leak_project_ids = [5, 4]
     const front_project_ids = [26, 27]
     const current_project_key = 'SHS_CURRENT_PROJECT'
     function get_current_project_id_from_ls() {
@@ -298,9 +298,13 @@ function showImage(url) {
         if (process_data) {
             const target_project_id = await process_data(task_data)
             project_id = target_project_id || project_id
-        }
-        const import_res = await fetch(`/api/projects/${project_id}/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify([task_data]) })
-        console.log('move_task_success', await import_res.json())
+        }        
+        const import_res = await fetch(`/api/tasks`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({data, project: project_id}) })
+        const taks_resp = await import_res.json()
+        console.log('move_task_success', taks_resp)
+        if (newAnnotations.length) {
+            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(newAnnotations[0]) })        
+        }        
         return project_id
     }
 
@@ -397,8 +401,7 @@ function showImage(url) {
                 } else {
                     const bj_project = find_project_by_name(pj_map, move_to_name)
                     if (bj_project) {
-                        move_task_to_project(task_id, bj_project.id)
-                        delete_task(task_id)
+                        move_task_to_project(task_id, bj_project.id).then(() => delete_task(task_id))                        
                         show_message(`移动至 ${move_to_name} 成功`)
                     }
                 }

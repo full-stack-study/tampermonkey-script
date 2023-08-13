@@ -202,18 +202,22 @@ function showImage(url) {
 
     const global_data = {}
 
+    document.body.addEventListener('click', detect_project_changed)
+
     async function detect_project_changed() {
+        console.log('begin detect_project_changed')
         const pj_map = await project_promise_map
         setTimeout(async () => {
             const pathname = location.pathname.split('/')
             const project_id = pathname[2]
+            const old_project_id = global_data.current_project_id
+            global_data.current_project_id = project_id
             if (global_data.current_project_id === project_id) {
                 return
             }
             clean_function_button()
             console.log('pathn', pathname)
             if (pathname[1] === 'projects' && !isNaN(project_id)) {
-                global_data.current_project_id = project_id
                 const current_project = pj_map[project_id]
                 const [new_pj, new_bg_pj] = await findMatchProject(current_project.title)
                 if (new_pj) {
@@ -277,9 +281,7 @@ function showImage(url) {
         project_list.forEach(item => {
             project_map[item.id] = item
         })
-        document.body.addEventListener('click', () => {
-            detect_project_changed()
-        })
+
         return project_map
     }
 

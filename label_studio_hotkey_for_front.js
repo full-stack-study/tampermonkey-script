@@ -163,59 +163,23 @@ function showImage(url) {
             })
         }
     }
-    
-    const leak_project_ids = [5, 4]
-    const front_project_ids = [26, 27]
-    const current_project_key = 'SHS_CURRENT_PROJECT'
-    function get_current_project_id_from_ls() {
-        const cur = localStorage.getItem(current_project_key)
-        if (cur === 'leak') {
-            return leak_project_ids
-        }
-        return front_project_ids
-    }
-    const project_list = ['leak', 'front']    
-    function switch_current_project() {
-        const cur = localStorage.getItem(current_project_key)
-        const cur_index = project_list.indexOf(cur)
-        console.log('cur_index', cur_index)
-        let next_index = 0
-        if (cur_index > -1) {
-            next_index = cur_index + 1
-            if (next_index >= project_list.length) {
-                next_index = 0
-            }
-        }
-        console.log('next_index', next_index, project_list.length)
-        const next_project = project_list[next_index]
-        localStorage.setItem(current_project_key, next_project)
-        show_message(`切换项目成功：${next_project}`)
-        location.reload()
-    }
 
-    document.addEventListener('keydown', e => {
-        console.log('he', e)
-        if (e.ctrlKey && e.shiftKey && e.code == 'KeyS') {
-            switch_current_project()
+    async function move_to_project(new_project_id, blank_project_id) {
+        if (new_project_id < 0) {
+            return '请选择目标项目'
         }
-    })
-
-    const [new_project_id, blank_project_id] = get_current_project_id_from_ls()
-    console.log('current', get_current_project_id_from_ls())
-
-    async function move_to_project() {
         const task_id = get_task_id()
-        move_task_to_project(task_id, new_project_id, task => {                        
+        move_task_to_project(task_id, new_project_id, task => {
             task.predictions = []
             if (!task.annotations.length) {
                 return blank_project_id
-                
+
             }
         }).then((pid) => {
             delete_task(task_id)
             show_message(`移动成功: ${task_id} -> ${pid}`)
         })
-        
+
         to_next_task()
     }
     function delete_and_to_next() {
@@ -231,20 +195,79 @@ function showImage(url) {
         show_message("清除注解和预测成功" + task_id)
     }
 
-    function add_function_button() {
+
+    const project_promise_map = init_tools()
+
+    detect_project_changed()
+
+    const global_data = {}
+
+    async function detect_project_changed() {
+        const pj_map = await project_promise_map
+        setTimeout(async () => {
+            const pathname = location.pathname.split('/')
+            const project_id = pathname[2]
+            if (global_data.current_project_id === project_id) {
+                return
+            }
+            clean_function_button()
+            console.log('pathn', pathname)
+            if (pathname[1] === 'projects' && !isNaN(project_id)) {
+                global_data.current_project_id = project_id
+                const current_project = pj_map[project_id]
+                const [new_pj, new_bg_pj] = await findMatchProject(current_project.title)
+                if (new_pj) {
+                    global_data.new_pj = new_pj
+                    global_data.new_bg_pj = new_bg_pj
+                    init_function_button()
+                }
+                console.log('npj, nbg', new_pj, new_bg_pj)
+            }
+            console.log('detect_project_changed ', global_data)
+        }, 1000)
+    }
+
+    async function findMatchProject(title) {
+        const pj_map = await project_promise_map
+        let source_title = title.split('_')[0]
+        const regex = /V\d+$/;
+        source_title = source_title.replace(regex, '')
+        for (let i = 9; i > 0; i--) {
+            const versionTitle = source_title + 'V' + i
+            const versionBg = versionTitle + '_BG'
+            const new_project = find_project_by_name(pj_map, versionTitle)
+
+            if (new_project) {
+                const new_bg_project = find_project_by_name(pj_map, versionBg)
+                return [new_project, new_bg_project]
+            }
+        }
+        return []
+    }
+    function clean_function_button() {
+        if (has_button_wrapper_id) {
+            document.getElementById(has_button_wrapper_id).remove()
+            has_button_wrapper_id = undefined
+        }
+    }
+
+    function init_function_button() {
+        clean_function_button()
         create_button('删除任务', delete_and_to_next, 'd')
-        const cur_project_value = localStorage.getItem(current_project_key)
-        if (cur_project_value === 'leak') {
+
+        const new_pj = global_data.new_pj
+
+        if (new_pj.title.toLowerCase().indexOf('leak') > -1) {
             create_button('打开检测拍照', () => {
                 const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
                 showImage(img_url)
             }, 'Space')
         }
-        create_button(`移动到项目_${new_project_id}_${localStorage.getItem(current_project_key)}`, move_to_project, 'r')
+        create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {
+            move_to_project(new_pj.id, global_data.new_bg_pj.id)
+        }, 'r')
 
     }
-
-    add_function_button()
 
     async function init_tools() {
         const response = await fetch(`/api/projects?t=${Date.now()}`)
@@ -254,13 +277,15 @@ function showImage(url) {
         project_list.forEach(item => {
             project_map[item.id] = item
         })
+        document.body.addEventListener('click', () => {
+            detect_project_changed()
+        })
         return project_map
     }
 
 
     function find_project_by_name(pj_map, name) {
         return Object.values(pj_map).filter(a => a.title === name)[0]
-
     }
 
 
@@ -298,13 +323,13 @@ function showImage(url) {
         if (process_data) {
             const target_project_id = await process_data(task_data)
             project_id = target_project_id || project_id
-        }        
+        }
         const import_res = await fetch(`/api/tasks`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({data, project: project_id}) })
         const taks_resp = await import_res.json()
         console.log('move_task_success', taks_resp)
         if (newAnnotations.length) {
-            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(newAnnotations[0]) })        
-        }        
+            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(newAnnotations[0]) })
+        }
         return project_id
     }
 
@@ -347,8 +372,6 @@ function showImage(url) {
         annotations.forEach(({ id }) => delete_annotation_by_id(id))
         clear_prediect(predictions)
     }
-
-    const project_promise_map = init_tools()
 
     const state_rate = {
         success: 0,
@@ -401,7 +424,7 @@ function showImage(url) {
                 } else {
                     const bj_project = find_project_by_name(pj_map, move_to_name)
                     if (bj_project) {
-                        move_task_to_project(task_id, bj_project.id).then(() => delete_task(task_id))                        
+                        move_task_to_project(task_id, bj_project.id).then(() => delete_task(task_id))
                         show_message(`移动至 ${move_to_name} 成功`)
                     }
                 }

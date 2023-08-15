@@ -169,7 +169,7 @@ function showImage(url) {
         }
     }
 
-    async function move_to_project(new_project_id, blank_project_id) {
+    async function move_to_project(new_project_id, blank_project_id, clean_annotation=false) {
         if (new_project_id < 0) {
             return '请选择目标项目'
         }
@@ -178,7 +178,10 @@ function showImage(url) {
             task.predictions = []
             if (!task.annotations.length) {
                 return blank_project_id
-
+            }
+            if (clean_annotation) {
+                task.annotations = []
+                return blank_project_id
             }
         }).then((pid) => {
             delete_task(task_id)
@@ -275,6 +278,10 @@ function showImage(url) {
         create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {
             move_to_project(new_pj.id, global_data.new_bg_pj.id)
         }, 'r')
+
+        create_button(`移动到背景项目_${new_pj.id}_${new_pj.title}`, () => {
+            move_to_project(new_pj.id, global_data.new_bg_pj.id, true)
+        }, 't')
 
     }
 

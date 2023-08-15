@@ -341,8 +341,8 @@ function showImage(url) {
         const import_res = await fetch(`/api/tasks`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({data, project: project_id}) })
         const taks_resp = await import_res.json()
         console.log('move_task_success', taks_resp)
-        if (newAnnotations.length) {
-            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(newAnnotations[0]) })
+        if (task_data.annotations.length) {
+            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(task_data.annotations[0]) })
         }
         return project_id
     }

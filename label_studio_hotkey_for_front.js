@@ -279,7 +279,7 @@ function showImage(url) {
             move_to_project(new_pj.id, global_data.new_bg_pj.id)
         }, 'r')
 
-        create_button(`移动到背景项目_${new_pj.id}_${new_pj.title}`, () => {
+        create_button(`移动到背景项目_${global_data.new_bg_pj.id}`, () => {
             move_to_project(new_pj.id, global_data.new_bg_pj.id, true)
         }, 't')
 

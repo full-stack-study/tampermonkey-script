@@ -270,8 +270,13 @@ function showImage(url) {
         create_button('删除任务', delete_and_to_next, 'd')
 
         const new_pj = global_data.new_pj
-
+        let gallery
         create_button('打开照片', () => {
+            if (gallery) {
+                gallery.hide()
+                gallery = undefined
+                return
+            }
             const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
             const images = img_url.split(',')
             const imgContainer = document.createElement('div')
@@ -280,7 +285,7 @@ function showImage(url) {
                 imgEl.src = item
                 imgContainer.appendChild(imgEl)
             })
-            const gallery = new Viewer(imgContainer);
+            gallery = new Viewer(imgContainer);
             gallery.show()                
         }, 'Space')
         create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {

@@ -271,20 +271,18 @@ function showImage(url) {
 
         const new_pj = global_data.new_pj
 
-        if (new_pj.title.toLowerCase().indexOf('leak') > -1) {
-            create_button('打开检测拍照', () => {
-                const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
-                const images = img_url.split(',')
-                const imgContainer = document.createElement('div')
-                images.forEach(item => {
-                    const imgEl = document.createElement('img')
-                    imgEl.src = item
-                    imgContainer.appendChild(imgEl)
-                })
-                const gallery = new Viewer(imgContainer);
-                gallery.show()                
-            }, 'Space')
-        }
+        create_button('打开照片', () => {
+            const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
+            const images = img_url.split(',')
+            const imgContainer = document.createElement('div')
+            images.forEach(item => {
+                const imgEl = document.createElement('img')
+                imgEl.src = item
+                imgContainer.appendChild(imgEl)
+            })
+            const gallery = new Viewer(imgContainer);
+            gallery.show()                
+        }, 'Space')
         create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {
             move_to_project(new_pj.id, global_data.new_bg_pj.id)
         }, 'r')

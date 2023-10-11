@@ -122,6 +122,8 @@ function showImage(url) {
     'use strict';
     __lb_add_css('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.css')
     __lb_add_js('https://cdn.bootcdn.net/ajax/libs/toastify-js/1.12.0/toastify.min.js')
+    __lb_add_css('https://cdn.bootcdn.net/ajax/libs/viewerjs/1.11.5/viewer.css')
+    __lb_add_js('https://cdn.bootcdn.net/ajax/libs/viewerjs/1.11.5/viewer.min.js')
 
     function delete_task(task_id) {
         task_id = task_id || get_task_id()
@@ -272,7 +274,15 @@ function showImage(url) {
         if (new_pj.title.toLowerCase().indexOf('leak') > -1) {
             create_button('打开检测拍照', () => {
                 const img_url = Array.from(document.querySelectorAll('.lsf-main-view .ant-typography')).map(a => a.innerText).filter(a => a.indexOf('http') > -1)[0]
-                showImage(img_url)
+                const images = img_url.split(',')
+                const imgContainer = document.createElement('div')
+                images.forEach(item => {
+                    const imgEl = document.createElement('img')
+                    imgEl.src = item
+                    imgContainer.appendChild(imgEl)
+                })
+                const gallery = new Viewer(imgContainer);
+                gallery.show()                
             }, 'Space')
         }
         create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {

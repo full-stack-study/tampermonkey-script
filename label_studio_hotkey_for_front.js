@@ -286,7 +286,7 @@ function showImage(url) {
                 imgContainer.appendChild(imgEl)
             })
             gallery = new Viewer(imgContainer);
-            gallery.show()                
+            gallery.show()
         }, 'Space')
         create_button(`移动到项目_${new_pj.id}_${new_pj.title}`, () => {
             move_to_project(new_pj.id, global_data.new_bg_pj.id)
@@ -354,9 +354,7 @@ function showImage(url) {
         const import_res = await fetch(`/api/tasks`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({data, project: project_id}) })
         const taks_resp = await import_res.json()
         console.log('move_task_success', taks_resp)
-        if (task_data.annotations.length) {
-            await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(task_data.annotations[0]) })
-        }
+        await fetch(`/api/tasks/${taks_resp.id}/annotations/`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(task_data.annotations[0]) })
         return project_id
     }
 

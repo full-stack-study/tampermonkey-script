@@ -440,7 +440,7 @@ function showImage(url) {
                 const cur_project = pj_map[get_current_project_id()]
                 console.log('cur_project', cur_project)
                 const project_name = cur_project.title
-                const base_name = project_name.split("_")[0]
+                const base_name = project_name.endsWith('_BG') ? project_name.replace(/_BG$/, '') : project_name
                 const task_info = await get_task_info(task_id)
                 const has_annoataion = task_info.annotations.filter(a => a.result.length > 0).length
                 const move_to_name = has_annoataion ? base_name : base_name + '_BG'

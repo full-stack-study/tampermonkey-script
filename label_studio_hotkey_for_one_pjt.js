@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.1.2
+// @version      2.1.3
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio.shanhs.com.cn/*
@@ -208,7 +208,7 @@ function showImage(url) {
         create_button('保存并下一个', save_and_to_next, 'w')
         create_button('上一个', to_before_task, 'q')
         create_button('下一个', to_next_task, 'e')
-        create_button('移动到负样本', move_to_bg_task, 'e')
+        create_button('移动到负样本', move_to_bg_task, 'f')
         create_button('删除任务', delete_and_to_next, 'd')
 
         let gallery

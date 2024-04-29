@@ -141,7 +141,7 @@ function showImage(url) {
 
             // 设置样式
             divElement.style.position = "fixed";
-            divElement.style.top = '10px';
+            divElement.style.top = '5px';
             divElement.style.left = "50%";
             divElement.style.zIndex = 100000;
             // 添加其他样式属性，如宽度、高度、背景颜色等

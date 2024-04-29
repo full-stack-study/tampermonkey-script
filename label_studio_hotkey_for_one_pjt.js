@@ -204,7 +204,7 @@ function showImage(url) {
 
     function init_function_button() {
         clean_function_button()
-        create_button('保存', save_task, 'd')
+        create_button('保存', save_task, 's')
         create_button('保存并下一个', save_and_to_next, 'w')
         create_button('上一个', to_before_task, 'q')
         create_button('下一个', to_next_task, 'e')

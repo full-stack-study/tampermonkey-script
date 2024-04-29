@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.1.3
+// @version      2.1.4
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio.shanhs.com.cn/*
@@ -266,33 +266,22 @@ function showImage(url) {
         return await response.json()
     }
 
-    async function move_task_to_project(task_id, project_id, process_data) {
+    async function move_task_to_project(task_id, project_id) {
         console.log('begin move project', task_id, project_id)
-        const {data, annotations} = await get_task_info(task_id)
+        const {data} = await get_task_info(task_id)
         delete data.id
         delete data.dataId
-        const newAnnotations = annotations.filter(r => r.result.length > 0).map(a => {
-            a.result.forEach(item => {
-                delete item.id
-            })
-            return {result: a.result}
-        })
         const task_data = {
             data,
-            annotations: newAnnotations
-        }
-        if (process_data) {
-            const target_project_id = await process_data(task_data)
-            project_id = target_project_id || project_id
         }
         const import_res = await fetch(`/api/tasks`, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({data, project: project_id})
         })
-        const taks_resp = await import_res.json()
-        console.log('move_task_success', taks_resp)
-        await fetch(`/api/tasks/${taks_resp.id}/annotations/`, {
+        const task_resp = await import_res.json()
+        console.log('move_task_success', task_resp)
+        fetch(`/api/tasks/${task_resp.id}/annotations/`, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(task_data.annotations[0])
@@ -317,18 +306,6 @@ function showImage(url) {
         }
     }
 
-
-    function delete_prediction_by_id(id) {
-        return fetch(`/api/predictions/${id}`, {method: 'DELETE'})
-    }
-
-    function clear_prediect(predictions) {
-        if (predictions) {
-            const all_delete_task = predictions.map(({id}) => delete_prediction_by_id(id))
-            return Promise.all(all_delete_task)
-        }
-        return Promise.resolve()
-    }
 
     function save_task() {
         document.querySelector('.lsf-controls button').click()
@@ -358,16 +335,12 @@ function showImage(url) {
             const move_to_name = has_annoataion ? base_name : base_name + '_BG'
             const current_is_base_project = project_name === base_name
             if (has_annoataion && current_is_base_project) {
-                clear_prediect(task_info.predictions)
-                show_message('清除预测数据成功')
-            } else {
                 const bj_project = find_project_by_name(pj_map, move_to_name)
                 if (bj_project) {
                     move_task_to_project(task_id, bj_project.id).then(() => delete_task(task_id))
                     show_message(`移动至 ${move_to_name} 成功`)
                 }
             }
-            // 将对应
         }
         if (move) {
             to_next_task()

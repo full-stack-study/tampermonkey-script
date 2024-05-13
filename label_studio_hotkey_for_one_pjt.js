@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.1.5
+// @version      2.1.6
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio.shanhs.com.cn/*
@@ -234,7 +234,7 @@ function showImage(url) {
     }
 
     async function init_tools() {
-        const response = await fetch(`/api/projects?t=${Date.now()}`)
+        const response = await fetch(`/api/projects?t=${Date.now()}&page_size=999`)
         const data = await response.json()
         const project_list = data.results
         const project_map = {}

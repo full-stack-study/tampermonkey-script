@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.1.6
+// @version      2.1.7
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio.shanhs.com.cn/*
@@ -195,6 +195,7 @@ function showImage(url) {
             console.log('detect_project_changed ', global_data)
         }, 1000)
     }
+
     function clean_function_button() {
         if (has_button_wrapper_id) {
             document.getElementById(has_button_wrapper_id).remove()
@@ -208,7 +209,7 @@ function showImage(url) {
         create_button('保存并下一个', save_and_to_next, 'w')
         create_button('上一个', to_before_task, 'q')
         create_button('下一个', to_next_task, 'e')
-        create_button('移动到负样本', move_to_bg_task, 'f')
+        create_button('清除标注', move_to_bg_task, 'f')
         create_button('移动到正样本', move_to_true_task, 'r')
         create_button('删除任务', delete_and_to_next, 'd')
 
@@ -267,7 +268,7 @@ function showImage(url) {
         return await response.json()
     }
 
-    async function move_task_to_project(task_id, project_id, clear_anno=false) {
+    async function move_task_to_project(task_id, project_id, clear_anno = false) {
         console.log('begin move project', task_id, project_id)
         const {data, annotations} = await get_task_info(task_id)
         delete data.id
@@ -276,7 +277,7 @@ function showImage(url) {
             a.result.forEach(item => {
                 delete item.id
             })
-            return { result: a.result }
+            return {result: a.result}
         })
         const task_data = {
             data,
@@ -330,6 +331,11 @@ function showImage(url) {
         document.querySelector('.dm-table__row-wrapper_selected').previousSibling.click()
     }
 
+    function delete_annotations_and_predictions(task_id) {
+        fetch(`/api/annotations/${task_id}`, {method: 'DELETE'})
+        fetch(`/api/predictions/${task_id}`, {method: 'DELETE'})
+    }
+
     async function move_to_bg_task(move = true) {
         const task_id = get_task_id()
         if (task_id) {
@@ -338,27 +344,35 @@ function showImage(url) {
             const project_name = cur_project.title
             const base_name = project_name.endsWith('_BG') ? project_name.replace(/_BG$/, '') : project_name
             const move_to_name = base_name + '_BG'
-            const bj_project = find_project_by_name(pj_map, move_to_name)
-            if (bj_project) {
-                move_task_to_project(task_id, bj_project.id, true).then(() => delete_task(task_id))
+            const bg_project = find_project_by_name(pj_map, move_to_name)
+            if (bg_project) {
+                move_task_to_project(task_id, bg_project.id, true).then(() => delete_task(task_id))
                 show_message(`移动至 ${move_to_name} 成功`)
+            } else {
+                delete_annotations_and_predictions(task_id)
             }
         }
         if (move) {
             to_next_task()
         }
     }
+
     async function move_to_true_task(move = true) {
         const task_id = get_task_id()
         if (task_id) {
             const pj_map = await project_promise_map
             const cur_project = pj_map[get_current_project_id()]
             const project_name = cur_project.title
-            const base_name = project_name.endsWith('_BG') ? project_name.replace(/_BG$/, '') : project_name
-            const true_project = find_project_by_name(pj_map, base_name)
-            if (true_project) {
-                move_task_to_project(task_id, true_project.id).then(() => delete_task(task_id))
-                show_message(`移动至 ${base_name} 成功`)
+            const is_bg_project = project_name.endsWith('_BG')
+            if (is_bg_project) {
+                const base_name = project_name.replace(/_BG$/, '')
+                const true_project = find_project_by_name(pj_map, base_name)
+                if (true_project) {
+                    move_task_to_project(task_id, true_project.id).then(() => delete_task(task_id))
+                    show_message(`移动至 ${base_name} 成功`)
+                }
+            } else {
+                save_task()
             }
         }
         if (move) {

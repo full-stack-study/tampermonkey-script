@@ -336,23 +336,10 @@ function showImage(url) {
         fetch(`/api/predictions/${task_id}`, {method: 'DELETE'})
     }
 
-    async function move_to_bg_task(move = true) {
+    async function move_to_bg_task() {
         const task_id = get_task_id()
         if (task_id) {
-            const pj_map = await project_promise_map
-            const cur_project = pj_map[get_current_project_id()]
-            const project_name = cur_project.title
-            const base_name = project_name.endsWith('_BG') ? project_name.replace(/_BG$/, '') : project_name
-            const move_to_name = base_name + '_BG'
-            const bg_project = find_project_by_name(pj_map, move_to_name)
-            if (bg_project) {
-                move_task_to_project(task_id, bg_project.id, true).then(() => delete_task(task_id))
-                show_message(`移动至 ${move_to_name} 成功`)
-            } else {
-                delete_annotations_and_predictions(task_id)
-            }
-        }
-        if (move) {
+            delete_annotations_and_predictions(task_id)
             to_next_task()
         }
     }

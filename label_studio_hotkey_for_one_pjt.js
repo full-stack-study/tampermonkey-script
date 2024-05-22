@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         label_studio_hotkey
 // @namespace    https://github.com/full-stack-study/tampermonkey-script
-// @version      2.1.8
+// @version      2.1.9
 // @description  给label_studio添加一些自定义的快捷键!
 // @author       DiamondFsd
 // @match        http://labelstudio.shanhs.com.cn/*
@@ -331,9 +331,12 @@ function showImage(url) {
         document.querySelector('.dm-table__row-wrapper_selected').previousSibling.click()
     }
 
-    function delete_annotations_and_predictions(task_id) {
-        fetch(`/api/annotations/${task_id}`, {method: 'DELETE'})
-        fetch(`/api/predictions/${task_id}`, {method: 'DELETE'})
+    async function delete_annotations_and_predictions(task_id) {
+        const task_info = await get_task_info(task_id)
+        const annotations_ids = task_info.annotations.map(a => a.id)
+        const predictions_ids = task_info.predictions.map(a => a.id)
+        annotations_ids.forEach(anno_id => fetch(`/api/annotations/${anno_id}`, {method: 'DELETE'}))
+        predictions_ids.forEach(pred_id => fetch(`/api/predictions/${pred_id}`, {method: 'DELETE'}))
     }
 
     async function move_to_bg_task() {

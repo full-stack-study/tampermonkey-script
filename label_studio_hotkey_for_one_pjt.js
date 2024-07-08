@@ -337,13 +337,18 @@ function showImage(url) {
         const predictions_ids = task_info.predictions.map(a => a.id)
         annotations_ids.forEach(anno_id => fetch(`/api/annotations/${anno_id}`, {method: 'DELETE'}))
         predictions_ids.forEach(pred_id => fetch(`/api/predictions/${pred_id}`, {method: 'DELETE'}))
+        return annotations_ids.length > 0 || predictions_ids.length > 0
     }
 
     async function move_to_bg_task() {
         const task_id = get_task_id()
         if (task_id) {
-            delete_annotations_and_predictions(task_id)
-            to_next_task()
+            const hasData = await delete_annotations_and_predictions(task_id)
+            if (hasData) {
+                to_next_task()
+            } else {
+                save_and_to_next()
+            }
         }
     }
 

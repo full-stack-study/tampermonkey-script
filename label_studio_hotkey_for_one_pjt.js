@@ -324,7 +324,7 @@ function showImage(url) {
         save_task()
         setTimeout(() => {
             to_next_task()
-        }, 500)
+        }, 800)
     }
 
     function to_before_task() {
